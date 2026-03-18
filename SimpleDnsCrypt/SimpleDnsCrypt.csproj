@@ -20,13 +20,13 @@
 		<PackageReference Include="helper-net" Version="0.2.0" />
 		<PackageReference Include="MahApps.Metro.IconPacks.Material" Version="6.2.1" />
 		<PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.2.1" />
-		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
-		<PackageReference Include="minisign-net" Version="0.2.0" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.16.0" />
+		<PackageReference Include="minisign-net" Version="1.0.0" />
 		<PackageReference Include="Nett" Version="0.15.0" />
-		<PackageReference Include="NLog" Version="6.0.6" />
-		<PackageReference Include="System.ComponentModel.Composition" Version="10.0.0" />
-		<PackageReference Include="System.Management" Version="10.0.0" />
-		<PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.0" />
+		<PackageReference Include="NLog" Version="6.1.1" />
+		<PackageReference Include="System.ComponentModel.Composition" Version="10.0.5" />
+		<PackageReference Include="System.Management" Version="10.0.5" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.5" />
 		<PackageReference Include="WPFLocalizeExtension" Version="3.10.0" />
 		<PackageReference Include="YamlDotNet" Version="16.3.0" />
 	</ItemGroup>
