@@ -1,0 +1,258 @@
+<UserControl
+    x:Class="SimpleDnsCrypt.Views.Tabs.DomainBlockLogTabView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:lex="http://wpflocalizeextension.codeplex.com"
+    lex:LocalizeDictionary.DesignCulture="en"
+    lex:LocalizeDictionary.OutputMissingKeys="False"
+    lex:ResxLocalizationProvider.DefaultAssembly="SimpleDnsCrypt"
+    lex:ResxLocalizationProvider.DefaultDictionary="Translation">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <DockPanel Margin="0,10,0,0">
+            <Border
+                Margin="0,10,0,0"
+                Padding="10"
+                BorderThickness="1"
+                cal:Action.TargetWithoutContext="{Binding}"
+                DataContext="{Binding DomainBlockLogViewModel}"
+                DockPanel.Dock="Top">
+                <Border.BorderBrush>
+                    <DrawingBrush
+                        Opacity="0.4"
+                        TileMode="Tile"
+                        Viewport="0,0,8,8"
+                        ViewportUnits="Absolute">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="{DynamicResource AccentTextFillColorPrimaryBrush}">
+                                    <GeometryDrawing.Geometry>
+                                        <GeometryGroup>
+                                            <RectangleGeometry Rect="0,0,50,50" />
+                                            <RectangleGeometry Rect="50,50,50,50" />
+                                        </GeometryGroup>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Border.BorderBrush>
+                <Grid Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=ActualHeight, Converter={StaticResource HeightConverter}, ConverterParameter='DomainBlockLog'}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <iconPacks:PackIconMaterial
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Width="20"
+                            Height="20"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                            Kind="Eye" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="5,0,0,3"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                            Text="{lex:Loc Key=domainblocklog}"
+                            TextWrapping="Wrap" />
+                        <controls:ToggleSwitch
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Cursor="Hand"
+                            IsOn="{Binding IsDomainBlockLogLogging}" />
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <ListView
+                            Margin="10"
+                            VerticalContentAlignment="Stretch"
+                            BorderBrush="#198AB328"
+                            FontSize="12"
+                            ItemsSource="{Binding DomainBlockLogLines, Mode=OneWay}"
+                            ScrollViewer.CanContentScroll="True"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            SelectedItem="{Binding SelectedDomainBlockLogLine}"
+                            SelectionMode="Single"
+                            VirtualizingStackPanel.VirtualizationMode="Recycling">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="Background" Value="#198AB328" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="130" />
+                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="200" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Time, Converter={StaticResource LocalDateConverter}}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Host}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding QName}" />
+                                        <TextBlock Grid.Column="3" Text="{Binding Message}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Vertical">
+                            <StackPanel.Visibility>
+                                <MultiBinding Converter="{StaticResource IntegerBoolToVisibilityConverter}">
+                                    <Binding Path="DomainBlockLogLines.Count" />
+                                    <Binding Path="IsDomainBlockLogLogging" />
+                                </MultiBinding>
+                            </StackPanel.Visibility>
+                            <controls:ProgressRing
+                                Width="24"
+                                Height="24"
+                                Foreground="{DynamicResource AccentColorBrush}" />
+                            <TextBlock Margin="0,10,0,0" Text="{lex:Loc Key=domainblocklog_waiting_for_data}" />
+                        </StackPanel>
+                    </Grid>
+                    <Grid Grid.Row="2" Margin="10,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="40" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Text="{lex:Loc Key=domainblocklog_entry_count}" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            FontWeight="Bold"
+                            Text="{Binding DomainBlockLogLines.Count}" />
+
+                        <StackPanel
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                            <Button
+                                x:Name="ClearDomainBlockLog"
+                                Width="30"
+                                Height="30"
+                                Margin="5,0,0,0"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                cal:Message.Attach="ClearDomainBlockLog"
+                                BorderBrush="{DynamicResource AccentColorBrush}"
+                                Cursor="Hand"
+                                FocusVisualStyle="{DynamicResource MahApps.Metro.Styles.MetroCircleFocusVisual}"
+                                Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
+                                <iconPacks:PackIconMaterial
+                                    Width="15"
+                                    Height="15"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Foreground="{DynamicResource AccentColorBrush}"
+                                    Kind="NotificationClearAll" />
+                                <Button.ToolTip>
+                                    <Label Content="{lex:Loc Key=querylog_button_clear}" FontWeight="DemiBold" />
+                                </Button.ToolTip>
+                            </Button>
+                            <Button
+                                x:Name="UnblockBlockLogEntry"
+                                Width="30"
+                                Height="30"
+                                Margin="5,0,5,0"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                cal:Message.Attach="UnblockBlockLogEntry"
+                                BorderBrush="{DynamicResource AccentColorBrush}"
+                                Cursor="Hand"
+                                FocusVisualStyle="{DynamicResource MahApps.Metro.Styles.MetroCircleFocusVisual}"
+                                Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
+                                <iconPacks:PackIconMaterial
+                                    Width="15"
+                                    Height="15"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Foreground="{DynamicResource AccentColorBrush}"
+                                    Kind="Check" />
+                                <Button.ToolTip>
+                                    <Label Content="whitelist" FontWeight="DemiBold" />
+                                </Button.ToolTip>
+                            </Button>
+                        </StackPanel>
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Text="{lex:Loc Key=domainblocklog_source_file}" />
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Center"
+                            Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                            IsReadOnly="True"
+                            Opacity="0.4"
+                            Text="{Binding DomainBlockLogFile}" />
+                        <Button
+                            x:Name="ChangeBlockLogFilePath"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Width="30"
+                            Height="30"
+                            Margin="5,0,5,0"
+                            HorizontalAlignment="Right"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            cal:Message.Attach="ChangeBlockLogFilePath"
+                            BorderBrush="{DynamicResource AccentColorBrush}"
+                            Cursor="Hand"
+                            FocusVisualStyle="{DynamicResource MahApps.Metro.Styles.MetroCircleFocusVisual}"
+                            IsEnabled="False"
+                            Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
+                            <iconPacks:PackIconMaterial
+                                Width="15"
+                                Height="15"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Kind="DotsHorizontal" />
+                            <Button.ToolTip>
+                                <Label Content="{lex:Loc Key=button_select_path}" FontWeight="DemiBold" />
+                            </Button.ToolTip>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+        </DockPanel>
+    </ScrollViewer>
+</UserControl>

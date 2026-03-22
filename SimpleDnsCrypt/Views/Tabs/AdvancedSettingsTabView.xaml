@@ -1,0 +1,343 @@
+<UserControl
+    x:Class="SimpleDnsCrypt.Views.Tabs.AdvancedSettingsTabView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:lex="http://wpflocalizeextension.codeplex.com"
+    lex:LocalizeDictionary.DesignCulture="en"
+    lex:LocalizeDictionary.OutputMissingKeys="False"
+    lex:ResxLocalizationProvider.DefaultAssembly="SimpleDnsCrypt"
+    lex:ResxLocalizationProvider.DefaultDictionary="Translation">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" cal:Action.TargetWithoutContext="{Binding}">
+        <Border DockPanel.Dock="Top" IsEnabled="{Binding IsSavingConfiguration, Converter={StaticResource ReverseBoolToEnabledConverter}}">
+            <StackPanel Orientation="Vertical">
+                <Border
+                    Margin="0,0,0,8"
+                    Padding="8"
+                    Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="{lex:Loc Key=address_settings_listen_addresses}"
+                            TextWrapping="Wrap" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="550" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Text="{lex:Loc Key=address_settings_description}"
+                                TextWrapping="Wrap" />
+                            <Button
+                                x:Name="ListenAddresses"
+                                cal:Message.Attach="ListenAddresses"
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Width="Auto"
+                                Margin="0,0,0,5"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Content="{lex:Loc Key=address_settings_manage_listen_addresses}"
+                                Cursor="Hand"
+                                IsEnabled="{Binding IsWorkingOnService, Converter={StaticResource ReverseBoolToEnabledConverter}}"
+                                Style="{DynamicResource AccentButtonStyle}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border
+                    Margin="0,0,0,8"
+                    Padding="8"
+                    Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="{lex:Loc Key=advanced_settings_dnscache}"
+                            TextWrapping="Wrap" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Text="{lex:Loc Key=advanced_settings_dnscache_content}"
+                                TextWrapping="Wrap" />
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Cursor="Hand"
+                                IsChecked="{Binding DnscryptProxyConfiguration.cache}"
+                                IsEnabled="{Binding IsWorkingOnService, Converter={StaticResource ReverseBoolToEnabledConverter}}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border
+                    Margin="0,0,0,8"
+                    Padding="8"
+                    Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="{lex:Loc Key=advanced_settings_blockipv6}"
+                            TextWrapping="Wrap" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Text="{lex:Loc Key=advanced_settings_blockipv6_content}"
+                                TextWrapping="Wrap" />
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Cursor="Hand"
+                                IsChecked="{Binding DnscryptProxyConfiguration.block_ipv6}"
+                                IsEnabled="{Binding IsWorkingOnService, Converter={StaticResource ReverseBoolToEnabledConverter}}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border
+                    Margin="0,0,0,8"
+                    Padding="8"
+                    Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="{lex:Loc Key=advanced_settings_forcetcp}"
+                            TextWrapping="Wrap" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Text="{lex:Loc Key=advanced_settings_forcetcp_content}"
+                                TextWrapping="Wrap" />
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Cursor="Hand"
+                                IsChecked="{Binding DnscryptProxyConfiguration.force_tcp}"
+                                IsEnabled="{Binding IsWorkingOnService, Converter={StaticResource ReverseBoolToEnabledConverter}}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border
+                    Margin="0,0,0,8"
+                    Padding="8"
+                    Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="{lex:Loc Key=advanced_settings_globalresolver}"
+                            TextWrapping="Wrap" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Text="{lex:Loc Key=advanced_settings_globalresolver_content}"
+                                TextWrapping="Wrap" />
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Cursor="Hand"
+                                IsChecked="{Binding IsOperatingAsGlobalResolver}"
+                                IsEnabled="{Binding IsWorkingOnService, Converter={StaticResource ReverseBoolToEnabledConverter}}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border
+                    Margin="0,0,0,8"
+                    Padding="8"
+                    Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="{lex:Loc Key=advanced_settings_fallback_resolvers}"
+                            TextWrapping="Wrap" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="550" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Text="{lex:Loc Key=advanced_settings_fallback_resolvers_content}"
+                                TextWrapping="Wrap" />
+                            <Button
+                                x:Name="ManageFallbackResolvers"
+                                cal:Message.Attach="ManageFallbackResolvers"
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Width="Auto"
+                                Margin="0,0,0,5"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Content="{lex:Loc Key=advanced_settings_manage_fallback_resolvers}"
+                                Cursor="Hand"
+                                IsEnabled="{Binding IsWorkingOnService, Converter={StaticResource ReverseBoolToEnabledConverter}}"
+                                Style="{DynamicResource AccentButtonStyle}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border
+                    Margin="0,0,0,8"
+                    Padding="8"
+                    Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="{lex:Loc Key=advanced_settings_netprobe_timeout}"
+                            TextWrapping="Wrap" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="32.556" />
+                                <ColumnDefinition Width="517.444" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Margin="0,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Text="{lex:Loc Key=advanced_settings_netprobe_timeout_content}"
+                                TextWrapping="Wrap" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Width="80"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                DataObject.Pasting="NetprobeTimeout_Pasting"
+                                IsEnabled="{Binding IsWorkingOnService, Converter={StaticResource ReverseBoolToEnabledConverter}}"
+                                LostFocus="NetprobeTimeout_LostFocus"
+                                PreviewKeyDown="NetprobeTimeout_PreviewKeyDown"
+                                PreviewTextInput="NetprobeTimeout_PreviewTextInput"
+                                Text="{Binding DnscryptProxyConfiguration.netprobe_timeout, Mode=TwoWay, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+                                TextAlignment="Right" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border
+                    Margin="0,0,0,8"
+                    Padding="8"
+                    Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="Proxy Logging"
+                            TextWrapping="Wrap" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Text="Log to dnscrypt-proxy.log (log_level: 0)"
+                                TextWrapping="Wrap" />
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Cursor="Hand"
+                                IsChecked="{Binding DnscryptProxyConfiguration.log}"
+                                IsEnabled="{Binding IsWorkingOnService, Converter={StaticResource ReverseBoolToEnabledConverter}}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Button
+                    x:Name="SaveAdvancedSettings"
+                    cal:Message.Attach="SaveAdvancedSettings"
+                    Width="Auto"
+                    Margin="0,15,5,5"
+                    HorizontalAlignment="Right"
+                    Content="{lex:Loc Key=default_settings_apply_settings}"
+                    Cursor="Hand"
+                    Style="{DynamicResource AccentButtonStyle}" />
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</UserControl>
