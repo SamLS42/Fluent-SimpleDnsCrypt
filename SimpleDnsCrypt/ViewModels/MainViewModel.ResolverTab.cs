@@ -1,10 +1,8 @@
 using Caliburn.Micro;
 using DnsCrypt.Models;
-using SimpleDnsCrypt.Config;
 using SimpleDnsCrypt.Extensions;
 using SimpleDnsCrypt.Helper;
 using SimpleDnsCrypt.Models;
-using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Windows;
 

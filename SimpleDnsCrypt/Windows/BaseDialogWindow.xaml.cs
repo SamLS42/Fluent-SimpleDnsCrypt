@@ -1,12 +1,11 @@
 ﻿using System.Windows;
 
-namespace SimpleDnsCrypt.Windows
+namespace SimpleDnsCrypt.Windows;
+
+public partial class BaseDialogWindow : Window
 {
-	public partial class BaseDialogWindow : Window
+	public BaseDialogWindow()
 	{
-		public BaseDialogWindow()
-		{
-			InitializeComponent();
-		}
+		InitializeComponent();
 	}
 }

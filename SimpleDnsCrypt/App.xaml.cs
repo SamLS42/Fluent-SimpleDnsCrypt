@@ -1,8 +1,7 @@
 ﻿using System.Windows;
 
-namespace SimpleDnsCrypt
+namespace SimpleDnsCrypt;
+
+public partial class App : Application
 {
-	public partial class App : Application
-	{
-	}
 }

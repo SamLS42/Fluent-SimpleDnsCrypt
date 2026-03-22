@@ -1,23 +1,20 @@
-﻿using System;
+﻿namespace SimpleDnsCrypt.Models;
 
-namespace SimpleDnsCrypt.Models
+public class AddressBlockLogLine : LogLine
 {
-	public class AddressBlockLogLine : LogLine
+	public DateTime Time { get; set; }
+	public string Host { get; set; }
+	public string QName { get; set; }
+	public string Message { get; set; }
+
+	public AddressBlockLogLine(string line)
 	{
-		public DateTime Time { get; set; }
-		public string Host { get; set; }
-		public string QName { get; set; }
-		public string Message { get; set; }
-
-		public AddressBlockLogLine(string line)
+		try
 		{
-			try
-			{
 
-			}
-			catch (Exception)
-			{
-			}
+		}
+		catch (Exception)
+		{
 		}
 	}
 }

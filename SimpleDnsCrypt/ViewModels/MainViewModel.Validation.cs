@@ -1,7 +1,7 @@
+using SimpleDnsCrypt.Helper;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using SimpleDnsCrypt.Helper;
 
 namespace SimpleDnsCrypt.ViewModels;
 

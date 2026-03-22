@@ -1,18 +1,17 @@
-﻿namespace SimpleDnsCrypt.Models
+﻿namespace SimpleDnsCrypt.Models;
+
+public class Language
 {
-	public class Language
-	{
-		/// <summary>
-		///		The name of the language.
-		/// </summary>
-		public string Name { get; set; }
-		/// <summary>
-		///		Example: en
-		/// </summary>
-		public string ShortCode { get; set; }
-		/// <summary>
-		///     Example: en-US
-		/// </summary>
-		public string CultureCode { get; set; }
-	}
+	/// <summary>
+	///		The name of the language.
+	/// </summary>
+	public string Name { get; set; }
+	/// <summary>
+	///		Example: en
+	/// </summary>
+	public string ShortCode { get; set; }
+	/// <summary>
+	///     Example: en-US
+	/// </summary>
+	public string CultureCode { get; set; }
 }

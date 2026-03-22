@@ -3,50 +3,49 @@ using SimpleDnsCrypt.Models;
 using SimpleDnsCrypt.ViewModels;
 using System.Windows;
 
-namespace SimpleDnsCrypt.Extensions
+namespace SimpleDnsCrypt.Extensions;
+
+/// <summary>
+///     Custom WindowManagerExtensions.
+/// </summary>
+public static class WindowManagerExtensions
 {
 	/// <summary>
-	///     Custom WindowManagerExtensions.
+	///     Extended MetroMessageBox.
 	/// </summary>
-	public static class WindowManagerExtensions
+	/// <param name="this"></param>
+	/// <param name="message"></param>
+	/// <param name="title"></param>
+	/// <param name="buttons"></param>
+	/// <param name="messageBoxType"></param>
+	/// <returns></returns>
+	public static MessageBoxResult ShowMetroMessageBox(this IWindowManager @this, string message, string title,
+		MessageBoxButton buttons, BoxType messageBoxType = BoxType.Default)
 	{
-		/// <summary>
-		///     Extended MetroMessageBox.
-		/// </summary>
-		/// <param name="this"></param>
-		/// <param name="message"></param>
-		/// <param name="title"></param>
-		/// <param name="buttons"></param>
-		/// <param name="messageBoxType"></param>
-		/// <returns></returns>
-		public static MessageBoxResult ShowMetroMessageBox(this IWindowManager @this, string message, string title,
-			MessageBoxButton buttons, BoxType messageBoxType = BoxType.Default)
+		MessageBoxResult retval;
+		MainViewModel shellViewModel = IoC.Get<MainViewModel>();
+
+		try
 		{
-			MessageBoxResult retval;
-			MainViewModel shellViewModel = IoC.Get<MainViewModel>();
+			MetroMessageBoxViewModel model = new(message, title, buttons, messageBoxType);
+			Execute.OnUIThread(() => @this.ShowDialogAsync(model));
+			retval = model.Result;
+		}
+		finally
+		{
 
-			try
-			{
-				MetroMessageBoxViewModel model = new(message, title, buttons, messageBoxType);
-				Execute.OnUIThread(() => @this.ShowDialogAsync(model));
-				retval = model.Result;
-			}
-			finally
-			{
-
-			}
-
-			return retval;
 		}
 
-		/// <summary>
-		///     Simple MetroMessageBox.
-		/// </summary>
-		/// <param name="this"></param>
-		/// <param name="message"></param>
-		public static void ShowMetroMessageBox(this IWindowManager @this, string message)
-		{
-			@this.ShowMetroMessageBox(message, "System Message", MessageBoxButton.OK);
-		}
+		return retval;
+	}
+
+	/// <summary>
+	///     Simple MetroMessageBox.
+	/// </summary>
+	/// <param name="this"></param>
+	/// <param name="message"></param>
+	public static void ShowMetroMessageBox(this IWindowManager @this, string message)
+	{
+		@this.ShowMetroMessageBox(message, "System Message", MessageBoxButton.OK);
 	}
 }

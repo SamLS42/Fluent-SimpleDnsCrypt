@@ -4,79 +4,83 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using Screen = Caliburn.Micro.Screen;
 
-namespace SimpleDnsCrypt.ViewModels
+namespace SimpleDnsCrypt.ViewModels;
+
+[Export(typeof(ListenAddressesViewModel))]
+[method: ImportingConstructor]
+public class ListenAddressesViewModel() : Screen
 {
-	[Export(typeof(ListenAddressesViewModel))]
-	[method: ImportingConstructor]
-	public class ListenAddressesViewModel() : Screen
+	private ObservableCollection<string> _listenAddresses = [];
+
+	/// <summary>
+	///     The title of the window.
+	/// </summary>
+	public string WindowTitle
 	{
-		private ObservableCollection<string> _listenAddresses = [];
-
-		/// <summary>
-		///     The title of the window.
-		/// </summary>
-		public string WindowTitle
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => WindowTitle);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => WindowTitle);
 		}
+	}
 
-		public ObservableCollection<string> ListenAddresses
+	public ObservableCollection<string> ListenAddresses
+	{
+		get => _listenAddresses;
+		set
 		{
-			get => _listenAddresses;
-			set
-			{
-				_listenAddresses = value;
-				NotifyOfPropertyChange(() => ListenAddresses);
-			}
+			_listenAddresses = value;
+			NotifyOfPropertyChange(() => ListenAddresses);
 		}
+	}
 
-		public string SelectedListenAddress
+	public string SelectedListenAddress
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => SelectedListenAddress);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => SelectedListenAddress);
 		}
+	}
 
-		public string AddressInput
+	public string AddressInput
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => AddressInput);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => AddressInput);
 		}
+	}
 
-		public void AddAddress()
-		{
-			if (string.IsNullOrEmpty(AddressInput)) return;
-			string validatedAddress = ValidationHelper.ValidateIpEndpoint(AddressInput);
-			if (string.IsNullOrEmpty(validatedAddress)) return;
-			if (ListenAddresses.Contains(validatedAddress)) return;
-			ListenAddresses.Add(validatedAddress);
-			AddressInput = string.Empty;
-		}
+	public void AddAddress()
+	{
+		if (string.IsNullOrEmpty(AddressInput))
+			return;
+		string validatedAddress = ValidationHelper.ValidateIpEndpoint(AddressInput);
+		if (string.IsNullOrEmpty(validatedAddress))
+			return;
+		if (ListenAddresses.Contains(validatedAddress))
+			return;
+		ListenAddresses.Add(validatedAddress);
+		AddressInput = string.Empty;
+	}
 
-		public void RemoveAddress()
-		{
-			if (string.IsNullOrEmpty(SelectedListenAddress)) return;
-			if (_listenAddresses.Count == 1) return;
-			_listenAddresses.Remove(SelectedListenAddress);
-		}
+	public void RemoveAddress()
+	{
+		if (string.IsNullOrEmpty(SelectedListenAddress))
+			return;
+		if (_listenAddresses.Count == 1)
+			return;
+		_listenAddresses.Remove(SelectedListenAddress);
+	}
 
-		public void RestoreDefault()
-		{
-			ListenAddresses.Clear();
-			ListenAddresses.Add(Global.DefaultResolverIpv4);
-			ListenAddresses.Add(Global.DefaultResolverIpv6);
-		}
+	public void RestoreDefault()
+	{
+		ListenAddresses.Clear();
+		ListenAddresses.Add(Global.DefaultResolverIpv4);
+		ListenAddresses.Add(Global.DefaultResolverIpv6);
 	}
 }

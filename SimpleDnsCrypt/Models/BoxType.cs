@@ -1,23 +1,22 @@
-﻿namespace SimpleDnsCrypt.Models
+﻿namespace SimpleDnsCrypt.Models;
+
+/// <summary>
+///     Compatible box types.
+/// </summary>
+public enum BoxType
 {
 	/// <summary>
-	///     Compatible box types.
+	///     green
 	/// </summary>
-	public enum BoxType
-	{
-		/// <summary>
-		///     green
-		/// </summary>
-		Default,
+	Default,
 
-		/// <summary>
-		///     orange
-		/// </summary>
-		Warning,
+	/// <summary>
+	///     orange
+	/// </summary>
+	Warning,
 
-		/// <summary>
-		///     red
-		/// </summary>
-		Error
-	}
+	/// <summary>
+	///     red
+	/// </summary>
+	Error
 }

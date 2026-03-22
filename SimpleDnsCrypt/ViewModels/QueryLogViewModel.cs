@@ -11,284 +11,290 @@ using System.IO;
 using Application = System.Windows.Application;
 using Screen = Caliburn.Micro.Screen;
 
-namespace SimpleDnsCrypt.ViewModels
+namespace SimpleDnsCrypt.ViewModels;
+
+[Export(typeof(QueryLogViewModel))]
+public class QueryLogViewModel : Screen
 {
-	[Export(typeof(QueryLogViewModel))]
-	public class QueryLogViewModel : Screen
+	private static readonly ILog Log = LogManagerHelper.Factory();
+	private readonly IWindowManager _windowManager;
+	private readonly IEventAggregator _events;
+
+	private ObservableCollection<QueryLogLine> _queryLogLines;
+	private string _queryLogFile;
+	private bool _isQueryLogLogging;
+
+	[ImportingConstructor]
+	public QueryLogViewModel(IWindowManager windowManager, IEventAggregator events)
 	{
-		private static readonly ILog Log = LogManagerHelper.Factory();
-		private readonly IWindowManager _windowManager;
-		private readonly IEventAggregator _events;
+		_windowManager = windowManager;
+		_events = events;
+		_events.SubscribeOnPublishedThread(this);
+		_isQueryLogLogging = false;
+		_queryLogLines = [];
 
-		private ObservableCollection<QueryLogLine> _queryLogLines;
-		private string _queryLogFile;
-		private bool _isQueryLogLogging;
-
-		[ImportingConstructor]
-		public QueryLogViewModel(IWindowManager windowManager, IEventAggregator events)
+		if (!string.IsNullOrEmpty(Properties.Settings.Default.QueryLogFile))
 		{
-			_windowManager = windowManager;
-			_events = events;
-			_events.SubscribeOnPublishedThread(this);
-			_isQueryLogLogging = false;
-			_queryLogLines = [];
-
-			if (!string.IsNullOrEmpty(Properties.Settings.Default.QueryLogFile))
-			{
-				_queryLogFile = Properties.Settings.Default.QueryLogFile;
-			}
-			else
-			{
-				//set default
-				_queryLogFile = Path.Combine(Directory.GetCurrentDirectory(), Global.DnsCryptProxyFolder, Global.QueryLogFileName);
-				Properties.Settings.Default.QueryLogFile = _queryLogFile;
-				Properties.Settings.Default.Save();
-			}
+			_queryLogFile = Properties.Settings.Default.QueryLogFile;
 		}
-
-		private void AddLogLine(QueryLogLine queryLogLine)
+		else
 		{
-			Execute.OnUIThread(() =>
-			{
-				QueryLogLines.Add(queryLogLine);
-			});
+			//set default
+			_queryLogFile = Path.Combine(Directory.GetCurrentDirectory(), Global.DnsCryptProxyFolder, Global.QueryLogFileName);
+			Properties.Settings.Default.QueryLogFile = _queryLogFile;
+			Properties.Settings.Default.Save();
 		}
+	}
 
-		public async void BlockQueryLogEntry()
+	private void AddLogLine(QueryLogLine queryLogLine)
+	{
+		Execute.OnUIThread(() =>
 		{
-			try
+			QueryLogLines.Add(queryLogLine);
+		});
+	}
+
+	public async void BlockQueryLogEntry()
+	{
+		try
+		{
+			if (SelectedQueryLogLine == null)
+				return;
+			if (MainViewModel.Instance.DomainBlacklistViewModel == null)
+				return;
+			MetroDialogSettings dialogSettings = new()
 			{
-				if (SelectedQueryLogLine == null) return;
-				if (MainViewModel.Instance.DomainBlacklistViewModel == null) return;
-				MetroDialogSettings dialogSettings = new()
+				DefaultText = SelectedQueryLogLine.Remote.ToLower(),
+				AffirmativeButtonText = LocalizationEx.GetUiString("add", Thread.CurrentThread.CurrentCulture),
+				NegativeButtonText = LocalizationEx.GetUiString("cancel", Thread.CurrentThread.CurrentCulture),
+				ColorScheme = MetroDialogColorScheme.Theme
+			};
+
+			MetroWindow? metroWindow = Application.Current.Windows.OfType<MetroWindow>().FirstOrDefault();
+			//TODO: translate
+			string dialogResult = await metroWindow.ShowInputAsync(LocalizationEx.GetUiString("message_title_new_blacklist_rule", Thread.CurrentThread.CurrentCulture),
+				"Rule:", dialogSettings);
+
+			if (string.IsNullOrEmpty(dialogResult))
+				return;
+			string newCustomRule = dialogResult.ToLower().Trim();
+			IEnumerable<string> parsed = DomainBlacklist.ParseBlacklist(newCustomRule, true);
+			string[] enumerable = parsed as string[] ?? [.. parsed];
+			if (enumerable.Length != 1)
+				return;
+			MainViewModel.Instance.DomainBlacklistViewModel.DomainBlacklistRules.Add(enumerable[0]);
+			MainViewModel.Instance.DomainBlacklistViewModel.SaveBlacklistRulesToFile();
+		}
+		catch (Exception exception)
+		{
+			Log.Error(exception);
+		}
+	}
+
+	public void ClearQueryLog()
+	{
+		Execute.OnUIThread(QueryLogLines.Clear);
+	}
+
+	public ObservableCollection<QueryLogLine> QueryLogLines
+	{
+		get => _queryLogLines;
+		set
+		{
+			if (value.Equals(_queryLogLines))
+				return;
+			_queryLogLines = value;
+			NotifyOfPropertyChange(() => QueryLogLines);
+		}
+	}
+
+	public string QueryLogFile
+	{
+		get => _queryLogFile;
+		set
+		{
+			if (value.Equals(_queryLogFile))
+				return;
+			_queryLogFile = value;
+			NotifyOfPropertyChange(() => QueryLogFile);
+		}
+	}
+
+	public QueryLogLine SelectedQueryLogLine
+	{
+		get;
+		set
+		{
+			field = value;
+			NotifyOfPropertyChange(() => SelectedQueryLogLine);
+		}
+	}
+
+	public bool IsQueryLogLogging
+	{
+		get => _isQueryLogLogging;
+		set
+		{
+			_isQueryLogLogging = value;
+			QueryLog(DnscryptProxyConfigurationManager.DnscryptProxyConfiguration);
+			NotifyOfPropertyChange(() => IsQueryLogLogging);
+		}
+	}
+
+	public void ChangeQueryLogFilePath()
+	{
+		//try
+		//{
+		//	var queryLogFolderDialog = new FolderBrowserDialog
+		//	{
+		//		ShowNewFolderButton = true
+		//	};
+		//	if (!string.IsNullOrEmpty(_queryLogFile))
+		//	{
+		//		queryLogFolderDialog.SelectedPath = Path.GetDirectoryName(_queryLogFile);
+		//	}
+		//	var result = queryLogFolderDialog.ShowDialog();
+		//	if (result == true)
+		//	{
+		//		QueryLogFile = Path.Combine(queryLogFolderDialog.SelectedPath, Global.QueryLogFileName);
+		//		Properties.Settings.Default.QueryLogFile = _queryLogFile;
+		//		Properties.Settings.Default.Save();
+		//	}
+		//}
+		//catch (Exception exception)
+		//{
+		//	Log.Error(exception);
+		//}
+	}
+
+	private async void QueryLog(DnscryptProxyConfiguration dnscryptProxyConfiguration)
+	{
+		const string defaultLogFormat = "ltsv";
+		try
+		{
+			if (_isQueryLogLogging)
+			{
+				if (dnscryptProxyConfiguration == null)
+					return;
+
+				bool saveAndRestartService = false;
+				if (dnscryptProxyConfiguration.query_log == null)
 				{
-					DefaultText = SelectedQueryLogLine.Remote.ToLower(),
-					AffirmativeButtonText = LocalizationEx.GetUiString("add", Thread.CurrentThread.CurrentCulture),
-					NegativeButtonText = LocalizationEx.GetUiString("cancel", Thread.CurrentThread.CurrentCulture),
-					ColorScheme = MetroDialogColorScheme.Theme
-				};
+					dnscryptProxyConfiguration.query_log = new QueryLog
+					{
+						file = _queryLogFile,
+						format = defaultLogFormat
+					};
+					saveAndRestartService = true;
+				}
 
-				MetroWindow? metroWindow = Application.Current.Windows.OfType<MetroWindow>().FirstOrDefault();
-				//TODO: translate
-				string dialogResult = await metroWindow.ShowInputAsync(LocalizationEx.GetUiString("message_title_new_blacklist_rule", Thread.CurrentThread.CurrentCulture),
-					"Rule:", dialogSettings);
-
-				if (string.IsNullOrEmpty(dialogResult)) return;
-				string newCustomRule = dialogResult.ToLower().Trim();
-				IEnumerable<string> parsed = DomainBlacklist.ParseBlacklist(newCustomRule, true);
-				string[] enumerable = parsed as string[] ?? [.. parsed];
-				if (enumerable.Length != 1) return;
-				MainViewModel.Instance.DomainBlacklistViewModel.DomainBlacklistRules.Add(enumerable[0]);
-				MainViewModel.Instance.DomainBlacklistViewModel.SaveBlacklistRulesToFile();
-			}
-			catch (Exception exception)
-			{
-				Log.Error(exception);
-			}
-		}
-
-		public void ClearQueryLog()
-		{
-			Execute.OnUIThread(QueryLogLines.Clear);
-		}
-
-		public ObservableCollection<QueryLogLine> QueryLogLines
-		{
-			get => _queryLogLines;
-			set
-			{
-				if (value.Equals(_queryLogLines)) return;
-				_queryLogLines = value;
-				NotifyOfPropertyChange(() => QueryLogLines);
-			}
-		}
-
-		public string QueryLogFile
-		{
-			get => _queryLogFile;
-			set
-			{
-				if (value.Equals(_queryLogFile)) return;
-				_queryLogFile = value;
-				NotifyOfPropertyChange(() => QueryLogFile);
-			}
-		}
-
-		public QueryLogLine SelectedQueryLogLine
-		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => SelectedQueryLogLine);
-			}
-		}
-
-		public bool IsQueryLogLogging
-		{
-			get => _isQueryLogLogging;
-			set
-			{
-				_isQueryLogLogging = value;
-				QueryLog(DnscryptProxyConfigurationManager.DnscryptProxyConfiguration);
-				NotifyOfPropertyChange(() => IsQueryLogLogging);
-			}
-		}
-
-		public void ChangeQueryLogFilePath()
-		{
-			//try
-			//{
-			//	var queryLogFolderDialog = new FolderBrowserDialog
-			//	{
-			//		ShowNewFolderButton = true
-			//	};
-			//	if (!string.IsNullOrEmpty(_queryLogFile))
-			//	{
-			//		queryLogFolderDialog.SelectedPath = Path.GetDirectoryName(_queryLogFile);
-			//	}
-			//	var result = queryLogFolderDialog.ShowDialog();
-			//	if (result == true)
-			//	{
-			//		QueryLogFile = Path.Combine(queryLogFolderDialog.SelectedPath, Global.QueryLogFileName);
-			//		Properties.Settings.Default.QueryLogFile = _queryLogFile;
-			//		Properties.Settings.Default.Save();
-			//	}
-			//}
-			//catch (Exception exception)
-			//{
-			//	Log.Error(exception);
-			//}
-		}
-
-		private async void QueryLog(DnscryptProxyConfiguration dnscryptProxyConfiguration)
-		{
-			const string defaultLogFormat = "ltsv";
-			try
-			{
-				if (_isQueryLogLogging)
+				if (string.IsNullOrEmpty(dnscryptProxyConfiguration.query_log.format) ||
+					!dnscryptProxyConfiguration.query_log.format.Equals(defaultLogFormat))
 				{
-					if (dnscryptProxyConfiguration == null) return;
+					dnscryptProxyConfiguration.query_log.format = defaultLogFormat;
+					saveAndRestartService = true;
+				}
 
-					bool saveAndRestartService = false;
-					if (dnscryptProxyConfiguration.query_log == null)
+				if (string.IsNullOrEmpty(dnscryptProxyConfiguration.query_log.file))
+				{
+					dnscryptProxyConfiguration.query_log.file = _queryLogFile;
+					saveAndRestartService = true;
+				}
+
+				if (saveAndRestartService)
+				{
+					DnscryptProxyConfigurationManager.DnscryptProxyConfiguration = dnscryptProxyConfiguration;
+					if (DnscryptProxyConfigurationManager.SaveConfiguration())
 					{
-						dnscryptProxyConfiguration.query_log = new QueryLog
+						if (DnsCryptProxyManager.IsDnsCryptProxyInstalled())
 						{
-							file = _queryLogFile,
-							format = defaultLogFormat
-						};
-						saveAndRestartService = true;
-					}
-
-					if (string.IsNullOrEmpty(dnscryptProxyConfiguration.query_log.format) ||
-						!dnscryptProxyConfiguration.query_log.format.Equals(defaultLogFormat))
-					{
-						dnscryptProxyConfiguration.query_log.format = defaultLogFormat;
-						saveAndRestartService = true;
-					}
-
-					if (string.IsNullOrEmpty(dnscryptProxyConfiguration.query_log.file))
-					{
-						dnscryptProxyConfiguration.query_log.file = _queryLogFile;
-						saveAndRestartService = true;
-					}
-
-					if (saveAndRestartService)
-					{
-						DnscryptProxyConfigurationManager.DnscryptProxyConfiguration = dnscryptProxyConfiguration;
-						if (DnscryptProxyConfigurationManager.SaveConfiguration())
-						{
-							if (DnsCryptProxyManager.IsDnsCryptProxyInstalled())
+							if (DnsCryptProxyManager.IsDnsCryptProxyRunning())
 							{
-								if (DnsCryptProxyManager.IsDnsCryptProxyRunning())
-								{
-									DnsCryptProxyManager.Restart();
-									await Task.Delay(Global.ServiceRestartTime).ConfigureAwait(false);
-								}
-								else
-								{
-									DnsCryptProxyManager.Start();
-									await Task.Delay(Global.ServiceStartTime).ConfigureAwait(false);
-								}
+								DnsCryptProxyManager.Restart();
+								await Task.Delay(Global.ServiceRestartTime).ConfigureAwait(false);
 							}
 							else
 							{
-								await Task.Run(DnsCryptProxyManager.Install).ConfigureAwait(false);
-								await Task.Delay(Global.ServiceInstallTime).ConfigureAwait(false);
-								if (DnsCryptProxyManager.IsDnsCryptProxyInstalled())
-								{
-									DnsCryptProxyManager.Start();
-									await Task.Delay(Global.ServiceStartTime).ConfigureAwait(false);
-								}
+								DnsCryptProxyManager.Start();
+								await Task.Delay(Global.ServiceStartTime).ConfigureAwait(false);
 							}
 						}
-					}
-
-					if (!string.IsNullOrEmpty(_queryLogFile))
-					{
-						if (!File.Exists(_queryLogFile))
+						else
 						{
-							//create empty log file
-							using FileStream fs = File.Create(_queryLogFile);
-							fs.Close();
-						}
-						await Task.Run(() =>
-						{
-							using StreamReader reader = new(new FileStream(_queryLogFile,
-								FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-							//start at the end of the file
-							long lastMaxOffset = reader.BaseStream.Length;
-
-							while (_isQueryLogLogging)
+							await Task.Run(DnsCryptProxyManager.Install).ConfigureAwait(false);
+							await Task.Delay(Global.ServiceInstallTime).ConfigureAwait(false);
+							if (DnsCryptProxyManager.IsDnsCryptProxyInstalled())
 							{
-								Thread.Sleep(500);
-								//if the file size has not changed, idle
-								if (reader.BaseStream.Length == lastMaxOffset)
-									continue;
-
-								//seek to the last max offset
-								reader.BaseStream.Seek(lastMaxOffset, SeekOrigin.Begin);
-
-								//read out of the file until the EOF
-								string line;
-								while ((line = reader.ReadLine()) != null)
-								{
-									QueryLogLine queryLogLine = new(line);
-									AddLogLine(queryLogLine);
-								}
-
-								//update the last max offset
-								lastMaxOffset = reader.BaseStream.Position;
+								DnsCryptProxyManager.Start();
+								await Task.Delay(Global.ServiceStartTime).ConfigureAwait(false);
 							}
-						}).ConfigureAwait(false);
+						}
 					}
-					else
+				}
+
+				if (!string.IsNullOrEmpty(_queryLogFile))
+				{
+					if (!File.Exists(_queryLogFile))
 					{
-						_isQueryLogLogging = false;
+						//create empty log file
+						using FileStream fs = File.Create(_queryLogFile);
+						fs.Close();
 					}
+					await Task.Run(() =>
+					{
+						using StreamReader reader = new(new FileStream(_queryLogFile,
+							FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+						//start at the end of the file
+						long lastMaxOffset = reader.BaseStream.Length;
+
+						while (_isQueryLogLogging)
+						{
+							Thread.Sleep(500);
+							//if the file size has not changed, idle
+							if (reader.BaseStream.Length == lastMaxOffset)
+								continue;
+
+							//seek to the last max offset
+							reader.BaseStream.Seek(lastMaxOffset, SeekOrigin.Begin);
+
+							//read out of the file until the EOF
+							string line;
+							while ((line = reader.ReadLine()) != null)
+							{
+								QueryLogLine queryLogLine = new(line);
+								AddLogLine(queryLogLine);
+							}
+
+							//update the last max offset
+							lastMaxOffset = reader.BaseStream.Position;
+						}
+					}).ConfigureAwait(false);
 				}
 				else
 				{
-					//disable query log again
 					_isQueryLogLogging = false;
-					if (DnsCryptProxyManager.IsDnsCryptProxyRunning())
-					{
-						dnscryptProxyConfiguration.query_log.file = null;
-						DnscryptProxyConfigurationManager.DnscryptProxyConfiguration = dnscryptProxyConfiguration;
-						if (DnscryptProxyConfigurationManager.SaveConfiguration())
-						{
-							DnsCryptProxyManager.Restart();
-							await Task.Delay(Global.ServiceRestartTime).ConfigureAwait(false);
-						}
-					}
-					Execute.OnUIThread(QueryLogLines.Clear);
 				}
 			}
-			catch (Exception exception)
+			else
 			{
-				Log.Error(exception);
+				//disable query log again
+				_isQueryLogLogging = false;
+				if (DnsCryptProxyManager.IsDnsCryptProxyRunning())
+				{
+					dnscryptProxyConfiguration.query_log.file = null;
+					DnscryptProxyConfigurationManager.DnscryptProxyConfiguration = dnscryptProxyConfiguration;
+					if (DnscryptProxyConfigurationManager.SaveConfiguration())
+					{
+						DnsCryptProxyManager.Restart();
+						await Task.Delay(Global.ServiceRestartTime).ConfigureAwait(false);
+					}
+				}
+				Execute.OnUIThread(QueryLogLines.Clear);
 			}
+		}
+		catch (Exception exception)
+		{
+			Log.Error(exception);
 		}
 	}
 }

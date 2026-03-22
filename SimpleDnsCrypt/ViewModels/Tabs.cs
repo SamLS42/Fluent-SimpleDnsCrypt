@@ -1,15 +1,14 @@
-namespace SimpleDnsCrypt.ViewModels
+namespace SimpleDnsCrypt.ViewModels;
+
+public enum Tabs
 {
-	public enum Tabs
-	{
-		MainTab,
-		ResolverTab,
-		AdvancedSettingsTab,
-		QueryLogTab,
-		DomainBlockLogTab,
-		DomainBlacklistTab,
-		AddressBlockLogTab,
-		AddressBlacklistTab,
-		CloakAndForwardTab
-	}
+	MainTab,
+	ResolverTab,
+	AdvancedSettingsTab,
+	QueryLogTab,
+	DomainBlockLogTab,
+	DomainBlacklistTab,
+	AddressBlockLogTab,
+	AddressBlacklistTab,
+	CloakAndForwardTab
 }

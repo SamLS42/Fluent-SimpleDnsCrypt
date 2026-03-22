@@ -1,18 +1,17 @@
-﻿namespace SimpleDnsCrypt.Models
+﻿namespace SimpleDnsCrypt.Models;
+
+public enum QueryLogLineType
 {
-	public enum QueryLogLineType
-	{
-		Unknown,
-		A,
-		NS,
-		CNAME,
-		SOA,
-		WKS,
-		PTR,
-		MX,
-		TXT,
-		AAAA,
-		SRV,
-		ANY
-	}
+	Unknown,
+	A,
+	NS,
+	CNAME,
+	SOA,
+	WKS,
+	PTR,
+	MX,
+	TXT,
+	AAAA,
+	SRV,
+	ANY
 }

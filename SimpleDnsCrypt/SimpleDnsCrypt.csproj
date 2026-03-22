@@ -9,6 +9,7 @@
 		<ApplicationManifest>Properties/app.manifest</ApplicationManifest>
 		<Platforms>AnyCPU;x64;x86</Platforms>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

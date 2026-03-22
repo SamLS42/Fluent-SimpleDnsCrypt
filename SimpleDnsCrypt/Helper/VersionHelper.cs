@@ -1,36 +1,34 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
-namespace SimpleDnsCrypt.Helper
+namespace SimpleDnsCrypt.Helper;
+
+/// <summary>
+///     Helper class to show retrieve the application version.
+/// </summary>
+public static class VersionHelper
 {
 	/// <summary>
-	///     Helper class to show retrieve the application version.
+	///     Get the current Application version.
 	/// </summary>
-	public static class VersionHelper
+	public static string PublishVersion
 	{
-		/// <summary>
-		///     Get the current Application version.
-		/// </summary>
-		public static string PublishVersion
+		get
 		{
-			get
+			try
 			{
-				try
-				{
-					var version = Assembly.GetExecutingAssembly().GetName().Version;
-					return $"{version.Major}.{version.Minor}.{version.Build}";
-				}
-				catch (FormatException)
-				{
-					return "0";
-				}
-				catch (ArgumentNullException)
-				{
-					return "0";
-				}
+				Version? version = Assembly.GetExecutingAssembly().GetName().Version;
+				return $"{version.Major}.{version.Minor}.{version.Build}";
+			}
+			catch (FormatException)
+			{
+				return "0";
+			}
+			catch (ArgumentNullException)
+			{
+				return "0";
 			}
 		}
-
-		public static string PublishBuild => Environment.Is64BitProcess ? "(x64)" : "(x86)";
 	}
+
+	public static string PublishBuild => Environment.Is64BitProcess ? "(x64)" : "(x86)";
 }

@@ -1,32 +1,30 @@
 ﻿using Caliburn.Micro;
-using System;
 
-namespace SimpleDnsCrypt.Logger
+namespace SimpleDnsCrypt.Logger;
+
+public class NLogLogger(Type type) : ILog
 {
-	public class NLogLogger(Type type) : ILog
-	{
-		private readonly NLog.Logger _nLogLogger = NLog.LogManager.GetLogger(type.Name);
+	private readonly NLog.Logger _nLogLogger = NLog.LogManager.GetLogger(type.Name);
 
-		public void Error(Exception exception)
+	public void Error(Exception exception)
+	{
+		if (LogMode.Error)
 		{
-			if (LogMode.Error)
-			{
-				_nLogLogger.Error(exception);
-			}
+			_nLogLogger.Error(exception);
 		}
-		public void Info(string format, params object[] args)
+	}
+	public void Info(string format, params object[] args)
+	{
+		if (LogMode.Debug)
 		{
-			if (LogMode.Debug)
-			{
-				_nLogLogger.Debug(format, args);
-			}
+			_nLogLogger.Debug(format, args);
 		}
-		public void Warn(string format, params object[] args)
+	}
+	public void Warn(string format, params object[] args)
+	{
+		if (LogMode.Warn)
 		{
-			if (LogMode.Warn)
-			{
-				_nLogLogger.Warn(format, args);
-			}
+			_nLogLogger.Warn(format, args);
 		}
 	}
 }

@@ -1,12 +1,11 @@
 ﻿using System.Windows;
 
-namespace SimpleDnsCrypt.Windows
+namespace SimpleDnsCrypt.Windows;
+
+public partial class SplashDialogWindow : Window
 {
-	public partial class SplashDialogWindow : Window
+	public SplashDialogWindow()
 	{
-		public SplashDialogWindow()
-		{
-			InitializeComponent();
-		}
+		InitializeComponent();
 	}
 }

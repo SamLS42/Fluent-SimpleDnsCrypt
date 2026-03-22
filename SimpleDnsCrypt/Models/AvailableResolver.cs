@@ -2,150 +2,149 @@
 using SimpleDnsCrypt.Helper;
 using System.Text.Json.Serialization;
 
-namespace SimpleDnsCrypt.Models
+namespace SimpleDnsCrypt.Models;
+
+public enum RouteState
 {
-	public enum RouteState
+	Empty = 0,
+	Invalid = 1,
+	Valid = 2
+}
+
+public class AvailableResolver : PropertyChangedBase
+{
+	[JsonIgnore]
+	public string ToolTip => $"Ports: {string.Join(",", Ports.ToArray())}";
+	[JsonIgnore]
+	public string DisplayName => $"{Name} ({Protocol})";
+
+	[JsonIgnore]
+	public bool IsInServerList
 	{
-		Empty = 0,
-		Invalid = 1,
-		Valid = 2
+		get;
+		set
+		{
+			field = value;
+			NotifyOfPropertyChange(() => IsInServerList);
+		}
 	}
 
-	public class AvailableResolver : PropertyChangedBase
+	[JsonIgnore]
+	public RouteState RouteState
 	{
-		[JsonIgnore]
-		public string ToolTip => $"Ports: {string.Join(",", Ports.ToArray())}";
-		[JsonIgnore]
-		public string DisplayName => $"{Name} ({Protocol})";
-
-		[JsonIgnore]
-		public bool IsInServerList
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => IsInServerList);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => RouteState);
 		}
+	}
 
-		[JsonIgnore]
-		public RouteState RouteState
+	[JsonIgnore]
+	public string RouteStateText => RouteState switch
+	{
+		RouteState.Empty => LocalizationEx.GetUiString("configure_routes_add", Thread.CurrentThread.CurrentCulture),
+		RouteState.Invalid => LocalizationEx.GetUiString("configure_routes_invalid", Thread.CurrentThread.CurrentCulture),
+		RouteState.Valid => LocalizationEx.GetUiString("configure_routes_change", Thread.CurrentThread.CurrentCulture),
+		_ => LocalizationEx.GetUiString("configure_routes_unknown", Thread.CurrentThread.CurrentCulture),
+	};
+
+	[JsonIgnore]
+	public Route Route
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => RouteState);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Route);
 		}
+	}
 
-		[JsonIgnore]
-		public string RouteStateText => RouteState switch
+	[JsonPropertyName("name")]
+	public string Name
+	{
+		get;
+		set
 		{
-			RouteState.Empty => LocalizationEx.GetUiString("configure_routes_add", Thread.CurrentThread.CurrentCulture),
-			RouteState.Invalid => LocalizationEx.GetUiString("configure_routes_invalid", Thread.CurrentThread.CurrentCulture),
-			RouteState.Valid => LocalizationEx.GetUiString("configure_routes_change", Thread.CurrentThread.CurrentCulture),
-			_ => LocalizationEx.GetUiString("configure_routes_unknown", Thread.CurrentThread.CurrentCulture),
-		};
-
-		[JsonIgnore]
-		public Route Route
-		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Route);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Name);
 		}
+	}
 
-		[JsonPropertyName("name")]
-		public string Name
+	[JsonPropertyName("proto")]
+	public string Protocol
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Name);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Protocol);
 		}
+	}
 
-		[JsonPropertyName("proto")]
-		public string Protocol
+	[JsonPropertyName("ports")]
+	public List<int> Ports
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Protocol);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Ports);
 		}
+	}
 
-		[JsonPropertyName("ports")]
-		public List<int> Ports
+	[JsonPropertyName("ipv6")]
+	public bool Ipv6
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Ports);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Ipv6);
 		}
+	}
 
-		[JsonPropertyName("ipv6")]
-		public bool Ipv6
+	[JsonPropertyName("dnssec")]
+	public bool DnsSec
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Ipv6);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => DnsSec);
 		}
+	}
 
-		[JsonPropertyName("dnssec")]
-		public bool DnsSec
+	[JsonPropertyName("nolog")]
+	public bool NoLog
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => DnsSec);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => NoLog);
 		}
+	}
 
-		[JsonPropertyName("nolog")]
-		public bool NoLog
+	[JsonPropertyName("nofilter")]
+	public bool NoFilter
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => NoLog);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => NoFilter);
 		}
+	}
 
-		[JsonPropertyName("nofilter")]
-		public bool NoFilter
+	[JsonPropertyName("description")]
+	public string Description
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => NoFilter);
-			}
-		}
-
-		[JsonPropertyName("description")]
-		public string Description
-		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Description);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Description);
 		}
 	}
 }

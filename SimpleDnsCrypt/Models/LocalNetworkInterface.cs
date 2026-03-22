@@ -1,120 +1,119 @@
 ﻿using Caliburn.Micro;
 using System.Net.NetworkInformation;
 
-namespace SimpleDnsCrypt.Models
+namespace SimpleDnsCrypt.Models;
+
+public class LocalNetworkInterface : PropertyChangedBase
 {
-	public class LocalNetworkInterface : PropertyChangedBase
+	private OperationalStatus _operationalStatus;
+	private bool _isChangeable;
+
+	public LocalNetworkInterface()
 	{
-		private OperationalStatus _operationalStatus;
-		private bool _isChangeable;
+		Dns = [];
+		_isChangeable = true;
+	}
 
-		public LocalNetworkInterface()
+	public string Name
+	{
+		get;
+		set
 		{
-			Dns = [];
-			_isChangeable = true;
+			field = value;
+			NotifyOfPropertyChange(() => Name);
 		}
+	}
 
-		public string Name
+	/// <summary>
+	/// The status of the network card (up/down)
+	/// </summary>
+	public OperationalStatus OperationalStatus
+	{
+		get => _operationalStatus;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Name);
-			}
+			_operationalStatus = value;
+			NotifyOfPropertyChange(() => OperationalStatus);
 		}
+	}
 
-		/// <summary>
-		/// The status of the network card (up/down)
-		/// </summary>
-		public OperationalStatus OperationalStatus
+	public bool IsUp
+	{
+		get => _operationalStatus == OperationalStatus.Up;
+		set
 		{
-			get => _operationalStatus;
-			set
-			{
-				_operationalStatus = value;
-				NotifyOfPropertyChange(() => OperationalStatus);
-			}
+			_operationalStatus = value ? OperationalStatus.Up : OperationalStatus.Down;
+			NotifyOfPropertyChange(() => IsUp);
 		}
+	}
 
-		public bool IsUp
+	public string Description
+	{
+		get;
+		set
 		{
-			get => _operationalStatus == OperationalStatus.Up;
-			set
-			{
-				_operationalStatus = value ? OperationalStatus.Up : OperationalStatus.Down;
-				NotifyOfPropertyChange(() => IsUp);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Description);
 		}
+	}
 
-		public string Description
+	public NetworkInterfaceType Type
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Description);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Type);
 		}
+	}
 
-		public NetworkInterfaceType Type
+	public List<DnsServer> Dns
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Type);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Dns);
 		}
+	}
 
-		public List<DnsServer> Dns
+	public bool Ipv6Support
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Dns);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Ipv6Support);
 		}
+	}
 
-		public bool Ipv6Support
+	public bool Ipv4Support
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Ipv6Support);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Ipv4Support);
 		}
+	}
 
-		public bool Ipv4Support
+	public bool IsChangeable
+	{
+		get => _isChangeable;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Ipv4Support);
-			}
+			_isChangeable = value;
+			NotifyOfPropertyChange(() => IsChangeable);
 		}
+	}
 
-		public bool IsChangeable
+	public bool UseDnsCrypt
+	{
+		get;
+		set
 		{
-			get => _isChangeable;
-			set
-			{
-				_isChangeable = value;
-				NotifyOfPropertyChange(() => IsChangeable);
-			}
-		}
-
-		public bool UseDnsCrypt
-		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => UseDnsCrypt);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => UseDnsCrypt);
 		}
 	}
 }

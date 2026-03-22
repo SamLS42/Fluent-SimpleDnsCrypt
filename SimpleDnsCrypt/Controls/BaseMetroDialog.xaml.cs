@@ -1,10 +1,9 @@
-﻿namespace SimpleDnsCrypt.Controls
+﻿namespace SimpleDnsCrypt.Controls;
+
+public partial class BaseMetroDialog
 {
-	public partial class BaseMetroDialog
+	public BaseMetroDialog()
 	{
-		public BaseMetroDialog()
-		{
-			InitializeComponent();
-		}
+		InitializeComponent();
 	}
 }

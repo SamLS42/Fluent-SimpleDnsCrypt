@@ -7,56 +7,56 @@ using DragDropEffects = System.Windows.DragDropEffects;
 using IDropTarget = GongSolutions.Wpf.DragDrop.IDropTarget;
 using Screen = Caliburn.Micro.Screen;
 
-namespace SimpleDnsCrypt.ViewModels
+namespace SimpleDnsCrypt.ViewModels;
+
+[Export(typeof(RouteViewModel))]
+[method: ImportingConstructor]
+public class RouteViewModel() : Screen, IDropTarget
 {
-	[Export(typeof(RouteViewModel))]
-	[method: ImportingConstructor]
-	public class RouteViewModel() : Screen, IDropTarget
+	public string Resolver
 	{
-		public string Resolver
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Resolver);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Resolver);
 		}
+	}
 
-		public ObservableCollection<StampFileEntry> Route
+	public ObservableCollection<StampFileEntry> Route
+	{
+		get;
+		set
 		{
-			get;
-			set
-			{
-				field = value;
-				NotifyOfPropertyChange(() => Route);
-			}
+			field = value;
+			NotifyOfPropertyChange(() => Route);
 		}
+	}
 
-		public BindableCollection<StampFileEntry> Relays { get; internal set; }
+	public BindableCollection<StampFileEntry> Relays { get; internal set; }
 
-		public void Remove(StampFileEntry stampFileEntry)
+	public void Remove(StampFileEntry stampFileEntry)
+	{
+		if (stampFileEntry != null)
 		{
-			if (stampFileEntry != null)
-			{
-				Route.Remove(stampFileEntry);
-			}
+			Route.Remove(stampFileEntry);
 		}
+	}
 
-		void IDropTarget.DragOver(IDropInfo dropInfo)
+	void IDropTarget.DragOver(IDropInfo dropInfo)
+	{
+		if ((dropInfo.Data is StampFileEntry && dropInfo.TargetItem is StampFileEntry) || dropInfo.TargetItem is null)
 		{
-			if ((dropInfo.Data is StampFileEntry && dropInfo.TargetItem is StampFileEntry) || dropInfo.TargetItem is null)
-			{
-				dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
-				dropInfo.Effects = DragDropEffects.Move;
-			}
+			dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+			dropInfo.Effects = DragDropEffects.Move;
 		}
+	}
 
-		void IDropTarget.Drop(IDropInfo dropInfo)
-		{
-			StampFileEntry stampFileEntry = (StampFileEntry)dropInfo.Data;
-			if (Route.Where(s => s.Name.Equals(stampFileEntry.Name)).FirstOrDefault() != null) return;
-			Route.Add(stampFileEntry);
-		}
+	void IDropTarget.Drop(IDropInfo dropInfo)
+	{
+		StampFileEntry stampFileEntry = (StampFileEntry)dropInfo.Data;
+		if (Route.Where(s => s.Name.Equals(stampFileEntry.Name)).FirstOrDefault() != null)
+			return;
+		Route.Add(stampFileEntry);
 	}
 }

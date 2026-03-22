@@ -1,8 +1,7 @@
-﻿namespace SimpleDnsCrypt.Models
+﻿namespace SimpleDnsCrypt.Models;
+
+public class ValueDescription
 {
-	public class ValueDescription
-	{
-		public object Description { get; set; }
-		public object Value { get; set; }
-	}
+	public object Description { get; set; }
+	public object Value { get; set; }
 }

@@ -1,31 +1,30 @@
-﻿using System.Net.NetworkInformation;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
+using System.Net.NetworkInformation;
 
-namespace SimpleDnsCrypt.Models
+namespace SimpleDnsCrypt.Models;
+
+public class DnsServer : PropertyChangedBase
 {
-	public class DnsServer : PropertyChangedBase
+	private NetworkInterfaceComponent _type;
+	private string _address;
+
+	public NetworkInterfaceComponent Type
 	{
-		private NetworkInterfaceComponent _type;
-		private string _address;
-
-		public NetworkInterfaceComponent Type
+		get => _type;
+		set
 		{
-			get => _type;
-			set
-			{
-				_type = value;
-				NotifyOfPropertyChange(() => Type);
-			}
+			_type = value;
+			NotifyOfPropertyChange(() => Type);
 		}
+	}
 
-		public string Address
+	public string Address
+	{
+		get => _address;
+		set
 		{
-			get => _address;
-			set
-			{
-				_address = value;
-				NotifyOfPropertyChange(() => Address);
-			}
+			_address = value;
+			NotifyOfPropertyChange(() => Address);
 		}
 	}
 }

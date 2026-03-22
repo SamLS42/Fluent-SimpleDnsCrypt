@@ -17,7 +17,7 @@ public partial class AdvancedSettingsTabView : UserControl
 
 	private void NetprobeTimeout_PreviewTextInput(object sender, TextCompositionEventArgs e)
 	{
-		e.Handled=_nonNumericRegex.IsMatch(e.Text);
+		e.Handled = _nonNumericRegex.IsMatch(e.Text);
 	}
 
 	private void NetprobeTimeout_Pasting(object sender, DataObjectPastingEventArgs e)
@@ -38,8 +38,8 @@ public partial class AdvancedSettingsTabView : UserControl
 
 	private void NetprobeTimeout_PreviewKeyDown(object sender, KeyEventArgs e)
 	{
-		if (e.Key==Key.Space)
-			e.Handled=true;
+		if (e.Key == Key.Space)
+			e.Handled = true;
 	}
 
 	private void NetprobeTimeout_LostFocus(object sender, RoutedEventArgs e)
@@ -48,11 +48,11 @@ public partial class AdvancedSettingsTabView : UserControl
 		{
 			if (string.IsNullOrWhiteSpace(tb.Text))
 			{
-				tb.Text="0";
+				tb.Text = "0";
 			}
-			else if (!long.TryParse(tb.Text, out long value)||value<0)
+			else if (!long.TryParse(tb.Text, out long value) || value < 0)
 			{
-				tb.Text="0";
+				tb.Text = "0";
 			}
 			BindingExpression binding = tb.GetBindingExpression(TextBox.TextProperty);
 			binding?.UpdateSource();
